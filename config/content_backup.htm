@@ -4,17 +4,21 @@
 <p>倉儲:<a href="https://github.com/40623107/2019-40623107">https://github.com/40623107/2019-40623107</a></p>
 <h1>期末課程內容</h1>
 <p><span>操作影片課程內容整理</span></p>
+<h2>onshape 協同操作</h2>
+<h3>零組件繪製</h3>
+<h3>工程圖</h3>
 <h2>V-rep 動態模擬</h2>
 <h3>手足球自動回擊</h3>
 <p><iframe allowfullscreen="allowfullscreen" height="314" src="//www.youtube.com/embed/gjz6wJoysU0" width="560"></iframe></p>
 <h3>Lua鍵盤控制球員</h3>
 <p></p>
-<p><iframe allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="allowfullscreen" frameborder="0" height="315" src="https://www.youtube.com/embed/aPPbrZm339c" width="560"></iframe></p>
+<p>使用鍵盤W S D 來操控球員<iframe allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="allowfullscreen" frameborder="0" height="315" src="https://www.youtube.com/embed/aPPbrZm339c" width="560"></iframe></p>
 <h4><a href="https://github.com/mdekmol/cd2019a-task1-2019cda_t1_g6/blob/gh-pages/vrep/football_w11.ttt">檔案下載</a></h4>
 <p>參考資料:<a href="https://www.youtube.com/watch?v=Lc4GaaS7-jA">https://www.youtube.com/watch?v=Lc4GaaS7-jA</a></p>
 <h3>python手足球鍵盤控制雙人對打</h3>
 <p><iframe allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="allowfullscreen" frameborder="0" height="315" src="https://www.youtube.com/embed/StYcx4lytco" width="560"></iframe></p>
 <h5><a href="https://github.com/mdekmol/cd2019a-task1-2019cda_t1_g6/tree/gh-pages/vrep%E6%AA%94%E6%A1%88/handfootball(pp)">檔案下載</a></h5>
+<p><span>程式碼:</span></p>
 <pre class="brush:py;auto-links:false;toolbar:false" contenteditable="false">import vrep
 import sys, math
 import keyboard
@@ -78,6 +82,7 @@ while True:
 <h3>python手足球電腦對人</h3>
 <p><iframe allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="allowfullscreen" frameborder="0" height="315" src="https://www.youtube.com/embed/UJrygESYJV4" width="560"></iframe></p>
 <h5><a href="https://github.com/mdekmol/cd2019a-task1-2019cda_t1_g6/tree/gh-pages/vrep%E6%AA%94%E6%A1%88/handfootball(pc)">檔案下載</a></h5>
+<p>程式碼:</p>
 <pre class="brush:py;auto-links:false;toolbar:false" contenteditable="false">import vrep
 import sys, math
 import keyboard
@@ -144,6 +149,69 @@ while True:
                 break
         Mv = BB*2.3
         vrep.simxSetJointTargetVelocity(clientID,lmov_handle,Mv,vrep.simx_opmode_oneshot_wait)</pre>
+<h3>python手足球電腦對電腦</h3>
+<p><iframe allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="allowfullscreen" frameborder="0" height="315" src="https://www.youtube.com/embed/yj4XemS4JEA" width="560"></iframe></p>
+<h5><a href="https://github.com/mdekmol/cd2019a-task1-2019cda_t1_g6/tree/gh-pages/vrep%E6%AA%94%E6%A1%88/handfootball(cc)">檔案下載</a></h5>
+<p><span>程式碼:</span></p>
+<pre class="brush:py;auto-links:false;toolbar:false" contenteditable="false">import vrep
+import sys, math
+import keyboard
+# child threaded script: 
+# 內建使用 port 19997 若要加入其他 port, 在  serve 端程式納入
+#simExtRemoteApiStart(19999)
+  
+vrep.simxFinish(-1)
+  
+clientID = vrep.simxStart('127.0.0.1', 19997, True, True, 5000, 5)
+KickBallV = 360  
+up_KickBallVel = (math.pi/180)*KickBallV
+d_KickBallVel = -(math.pi/180)*KickBallV
+if clientID!= -1:
+    print("Connected to remote server")
+else:
+    print('Connection not successful')
+    sys.exit('Could not connect')
+
+errorCode,Sphere_handle=vrep.simxGetObjectHandle(clientID,'Sphere',vrep.simx_opmode_oneshot_wait)
+errorCode,lmov_handle=vrep.simxGetObjectHandle(clientID,'lmov', vrep.simx_opmode_oneshot_wait)
+errorCode,rmov_handle=vrep.simxGetObjectHandle(clientID,'rmov',vrep.simx_opmode_oneshot_wait)
+errorCode,lrev_handle=vrep.simxGetObjectHandle(clientID,'lrev',vrep.simx_opmode_oneshot_wait)
+errorCode,rrev_handle=vrep.simxGetObjectHandle(clientID,'rrev',vrep.simx_opmode_oneshot_wait)
+errorCode,R_handle=vrep.simxGetObjectHandle(clientID,'R',vrep.simx_opmode_oneshot_wait)
+errorCode,L_handle=vrep.simxGetObjectHandle(clientID,'L',vrep.simx_opmode_oneshot_wait)
+
+
+vrep.simxSetJointTargetVelocity(clientID,lmov_handle,0,vrep.simx_opmode_oneshot_wait)
+vrep.simxSetJointTargetVelocity(clientID,rmov_handle,0,vrep.simx_opmode_oneshot_wait)
+vrep.simxSetJointTargetVelocity(clientID,lrev_handle,0,vrep.simx_opmode_oneshot_wait)
+vrep.simxSetJointTargetVelocity(clientID,rrev_handle,0,vrep.simx_opmode_oneshot_wait)
+def speed(handle,speed):
+    errorCode = vrep.simxSetJointTargetVelocity(clientID,handle,speed,vrep.simx_opmode_oneshot_wait)
+vrep.simxStartSimulation(clientID,vrep.simx_opmode_oneshot_wait)
+#vrep.simxSetJointTargetVelocity(clientID,P1_handle,5,vrep.simx_opmode_oneshot_wait)
+while True:
+        errorCode,position_LB=vrep.simxGetObjectPosition(clientID,lrev_handle,-1,vrep.simx_opmode_oneshot)
+        errorCode,position_S=vrep.simxGetObjectPosition(clientID,Sphere_handle,-1,vrep.simx_opmode_oneshot)
+        errorCode,position_RB=vrep.simxGetObjectPosition(clientID,rrev_handle,-1,vrep.simx_opmode_oneshot)
+        BB =position_S[1] - position_LB[1] #左右
+        BBB =position_S[0] - position_LB[0]#前後
+        AA =position_S[1] - position_RB[1] #左右
+        AAA =position_S[0] - position_RB[0]#前後
+        #print(position_S)
+        if BBB &lt;0.07:
+            speed(lrev_handle, d_KickBallVel)
+        elif BBB &gt;= 0.07:
+            speed(lrev_handle, up_KickBallVel)
+        if AAA &gt;-0.07:
+            speed(rrev_handle, up_KickBallVel)
+        elif AAA &lt;= -0.07:
+            speed(rrev_handle, d_KickBallVel)
+        else:
+            pass
+        Mv = BB*3.3
+        vrep.simxSetJointTargetVelocity(clientID,lmov_handle,Mv,vrep.simx_opmode_oneshot_wait)
+        Mvv = AA*3.3
+        vrep.simxSetJointTargetVelocity(clientID,rmov_handle,Mvv,vrep.simx_opmode_oneshot_wait)</pre>
 <h1>期中課程內容</h1>
 <p>操作影片課程內容整理</p>
 <h5>協同產品設計實習-AG6</h5>
@@ -284,8 +352,8 @@ while True:
 <p><img alt="" height="386" src="/images/rundll32_9PmorqmYBC.png" width="443"/><img alt="" height="386" src="/images/rundll32_9PmorqmYBC.png" width="443"/></p>
 <p>完成修改後便能上網</p>
 <h2>個人作業</h2>
-<br/>自製可攜程式系統<iframe allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="allowfullscreen" frameborder="0" height="315" src="https://www.youtube.com/embed/oBdlFq34Rl4" width="560"></iframe>
-<h3>Vrep BubbleRob製作及模擬過程</h3>
+<h4><br/>自製可攜程式系統<iframe allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="allowfullscreen" frameborder="0" height="315" src="https://www.youtube.com/embed/oBdlFq34Rl4" width="560"></iframe></h4>
+<h4>Vrep BubbleRob製作及模擬過程</h4>
 <p><iframe allowfullscreen="allowfullscreen" height="314" src="//www.youtube.com/embed/gP5Nzxq1zYg" width="560"></iframe></p>
 <p><a href="https://github.com/mdekmol/cd2019a-task1-2019cda_t1_g6/blob/gh-pages/vrep%E6%AA%94%E6%A1%88/40623107.ttt">bubbleRob檔案</a></p>
 <h2>問題與討論</h2>
@@ -570,4 +638,4 @@ while True:
 <p>輸入完後便推送完成</p>
 <p><img alt="" height="188" src="/images/chrome_FgvsQPyRWB.png" width="1273"/></p>
 <h2>期中報告</h2>
-<br/>40623107<br/><br/><iframe allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="allowfullscreen" frameborder="0" height="315" src="https://www.youtube.com/embed/RA-sDKBQKlI" width="560"></iframe>
+<p><br/>40623107<br/><br/><iframe allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="allowfullscreen" frameborder="0" height="315" src="https://www.youtube.com/embed/RA-sDKBQKlI" width="560"></iframe></p>
